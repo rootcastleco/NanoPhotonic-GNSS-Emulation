@@ -1,0 +1,22 @@
+cff-version: 1.2.0
+message: "If you use this stochastic emulation software in your research, please cite it as below."
+authors:
+  - family-names: "Ayrıbaş"
+    given-names: "Batuhan"
+    orcid: "https://orcid.org/0009-0009-2807-3264"
+title: "NanoPhotonic GNSS Receiver: Stochastic Emulation Suite"
+version: 1.0.0
+date-released: 2026-02-21
+url: "https://github.com/rootcastleco/NanoPhotonic-GNSS-Emulation"
+repository-code: "https://github.com/rootcastleco/NanoPhotonic-GNSS-Emulation"
+keywords:
+  - "GNSS"
+  - "Kalman Filter"
+  - "Optical Clock"
+  - "Stochastic Simulation"
+  - "Monte Carlo"
+  - "Allan Variance"
+  - "Photonics"
+abstract: >-
+  A stochastic Python emulation suite designed to mathematically demonstrate the superlinear positioning improvement (eta_p ~ eta_c^1.5) achieved by integrating Chip-Scale Optical Clocks (CSOC) into Global Navigation Satellite System (GNSS) receivers.
+license: MIT

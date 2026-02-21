@@ -101,3 +101,15 @@ The suite includes headless generation of 4 publication-quality results utilizin
 If this stochastic emulation environment or mathematical scaling approach assists your research, please cite or attribute contextually to:
 
 > **AYRIBAŞ, Batuhan.** *NanoPhotonic GNSS Receiver: Stochastic Emulation Suite.* [GitHub Repository]. ORCID: [0009-0009-2807-3264](https://orcid.org/0009-0009-2807-3264).
+
+**BibTeX:**
+```bibtex
+@misc{ayribas2026nanophotonic,
+  author       = {Batuhan Ayrıbaş},
+  title        = {NanoPhotonic GNSS Receiver: Stochastic Emulation Suite},
+  year         = {2026},
+  publisher    = {GitHub},
+  journal      = {GitHub repository},
+  howpublished = {\url{https://github.com/rootcastleco/NanoPhotonic-GNSS-Emulation}}
+}
+```
