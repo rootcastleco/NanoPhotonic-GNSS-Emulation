@@ -1,60 +1,103 @@
-# Chip-Scale Optical Clock (CSOC) GNSS Emulation Suite
+<div align="center">
+  <img src="https://raw.githubusercontent.com/rootcastleco/NanoPhotonic-GNSS-Emulation/main/figures/fig1_allan_deviation.png" width="300" alt="Allan Deviation Logo"/>
+  
+  <h1>NanoPhotonic GNSS Receiver: Stochastic Emulation Suite</h1>
 
-[![ORCID](https://img.shields.io/badge/ORCID-0009--0009--2807--3264-A6CE39?logo=orcid&logoColor=white)](https://orcid.org/0009-0009-2807-3264)
-[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+  <p>
+    <strong>Mathematically demonstrating the superlinear positioning improvement ($\eta_p \propto \eta_c^{1.5}$) achieved by integrating Chip-Scale Optical Clocks (CSOC) into GNSS architectures.</strong>
+  </p>
 
-**Author:** Batuhan AYRIBAŞ
+  [![ORCID](https://img.shields.io/badge/ORCID-0009--0009--2807--3264-A6CE39?logo=orcid&logoColor=white)](https://orcid.org/0009-0009-2807-3264)
+  [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+  [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A stochastic Python emulation suite designed to mathematically demonstrate the superlinear positioning improvement ($\eta_p \propto \eta_c^{1.5}$) achieved by integrating Chip-Scale Optical Clocks (CSOC) into Global Navigation Satellite System (GNSS) receivers.
+  <p><b>Author:</b> Batuhan AYRIBAŞ</p>
+</div>
 
-This repository contains the source code, Extended Kalman Filter (EKF) implementation, and Monte Carlo simulation framework used to generate the experimental results for the associated manuscript.
+<hr/>
 
-## Overview
+## 📖 Overview
 
-Traditional GNSS receivers rely on Temperature-Compensated Crystal Oscillators (TCXOs). During periods of signal degradation (e.g., urban canyons, multi-path environments, spoofing attempts), the EKF's geometric trilateration degrades as the local oscillator wanders. 
+Traditional GNSS receivers rely on Temperature-Compensated Crystal Oscillators (TCXOs) to maintain the local timing replica. During periods of satellite signal degradation—such as in urban canyons, under heavy foliage, or during electronic spoofing—the receiver's Geometric Dilution of Precision (GDOP) spikes, forcing the Extended Kalman Filter (EKF) to rely on the local clock for "holdover". A drifting TCXO rapidly corrupts the geometric trilateration, causing the position estimate to diverge.
 
-This project simulates a highly constrained urban-canyon scenario to prove that replacing a TCXO ($h_0 \approx 10^{-9}$) with a nanophotonic CSOC ($h_0 \approx 10^{-10}$) prevents the EKF from incorrectly attributing geometric residuals to clock drift. Because Geometric Dilution of Precision (GDOP) acts as a multi-path multiplier, stripping away the pseudorange timing ambiguity allows the trilateration equations to converge aggressively, yielding a superlinear improvement in positioning accuracy.
-
-## Features
-
-1. **Stochastic Clock Noise Modeling (`clock_noise.py`)** 
-   - Time-domain Allan variance synthesis using $h_0, h_{-1}, h_{-2}$ coefficients.
-   - Accurately models WFM, FFM, and RWFM for both TCXO and CSOC oscillators.
-2. **Synthetic Satellite Geometry (`satellite_geometry.py`)**
-   - 8-satellite constellation with realistic line-of-sight vectors.
-   - Elevation-dependent pseudorange and Doppler measurement generation.
-   - Mathematical coupling of clock instability to correlation jitter.
-3. **Optical-Clock-Aware EKF (`gnss_ekf.py`)**
-   - 8-state Extended Kalman Filter (3D Position, 3D Velocity, Clock Bias, Clock Drift).
-   - Dynamically parameterized process noise matrix ($Q_{clock}$) derived from specific oscillator Allan coefficients.
-4. **Monte Carlo Runner & Figure Generation (`run_emulation.py`, `generate_figures.py`)**
-   - Headless simulation pipeline performing 50-trial Monte Carlo sweeps across 7 clock quality scale factors.
-   - Generates publication-ready PDF figures (Allan deviation, convergence timeseries, 2D error ellipses, and superlinear scaling).
-
-## Installation
-
-Ensure you have Python 3.8+ installed. Clone this repository and install the numerical dependencies:
-
-```bash
-git clone https://github.com/YOUR_USERNAME/NanoPhotonic-GNSS-Emulation.git
-cd NanoPhotonic-GNSS-Emulation
-pip install -r emulation/requirements.txt
-```
-
-## Usage
-
-To reproduce the study's experimental results and generate the figures:
-
-```bash
-# Run the Monte Carlo stochastic emulation (takes ~30 seconds)
-python3 emulation/run_emulation.py
-
-# Generate the publication-quality LaTeX figures
-python3 emulation/generate_figures.py
-```
-
-The output data will be saved to the `results/` directory as `.npz` arrays, and the corresponding plots will be saved to the `figures/` directory as `.pdf` and `.png` files.
+This repository provides the underlying **stochastic emulation framework** used to simulate introducing a **Chip-Scale Optical Clock (CSOC)** to the receiver architecture. By analyzing Allan Variance parameters and injecting them into the $Q_{clock}$ process noise matrix of an 8-state EKF, this environment demonstrates that improving clock stability leads to a **super-linear ($>1:1$) enhancement** in positioning accuracy under challenged conditions.
 
 ---
-*For questions or collaborations, please view my research profile on [ORCID](https://orcid.org/0009-0009-2807-3264).*
+
+## 🔬 Scientific & Mathematical Approach
+
+### 1. Allan Variance Clock Modeling
+The emulation begins by synthesizing continuous time-domain phase data mapping to specific Allan Variance coefficients ($h_0, h_{-1}, h_{-2}$).
+- **TCXO baseline:** $1 \times 10^{-9}$ at $\tau = 1s$
+- **Nanophotonic CSOC:** $1 \times 10^{-10}$ at $\tau = 1s$
+
+The fractional frequency noise $y(t)$ is generated by superimposing White Frequency Modulation (WFM), Flicker Frequency Modulation (FFM), and Random Walk Frequency Modulation (RWFM):
+$$ \sigma_y^2(\tau) = \frac{h_0}{2\tau} + 2\ln(2)h_{-1} + \frac{2\pi^2}{3}h_{-2}\tau $$
+
+### 2. EKF Covariance Injection
+The 8-state EKF tracks 3D Position, 3D Velocity, Clock Bias ($c\Delta t$), and Clock Drift. The $Q_{clock}$ sub-matrix is parameterized directly by the oscillator model, allowing the filter to mathematically "trust" the CSOC more than the TCXO during pseudorange measurement updates.
+
+### 3. Emulating the "Superlinear" Holdover
+During a simulated urban canyon signal outage (where active satellites drop below 4 and pseudorange multipath noise drastically increases), the geometry matrix $H$ becomes ill-conditioned. The CSOC allows the receiver to seamlessly coast using carrier-phase Doppler and internal timing. The mathematical coupling of the GDOP multiplier to the localization error reveals the relationship $\eta_p \propto \eta_c^{1.5}$.
+
+---
+
+## 📊 Experimental Results
+
+The suite includes headless generation of 4 publication-quality results utilizing Matplotlib. 
+
+<div align="center">
+  <table>
+    <tr>
+      <td align="center"><b>Clock Stability (Allan Deviation)</b></td>
+      <td align="center"><b>Urban Canyon Convergence</b></td>
+    </tr>
+    <tr>
+      <td><img src="figures/fig1_allan_deviation.png" width="400"/></td>
+      <td><img src="figures/fig2_convergence.png" width="400"/></td>
+    </tr>
+     <tr>
+      <td align="center"><b>2D Steady-State Error Ellipses</b></td>
+      <td align="center"><b>Superlinear Scaling Phenomenon</b></td>
+    </tr>
+    <tr>
+      <td><img src="figures/fig3_error_ellipse.png" width="400"/></td>
+      <td><img src="figures/fig4_superlinear.png" width="400"/></td>
+    </tr>
+  </table>
+</div>
+
+---
+
+## ⚙️ Installation & Usage
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/rootcastleco/NanoPhotonic-GNSS-Emulation.git
+   cd NanoPhotonic-GNSS-Emulation
+   ```
+
+2. **Install numerical dependencies:**
+   ```bash
+   pip3 install -r emulation/requirements.txt
+   ```
+
+3. **Run the Monte Carlo emulation (~30 seconds):**
+   This executes the 8-state EKF across 50 Monte Carlo trials per oscillator over 600 epochs.
+   ```bash
+   python3 emulation/run_emulation.py
+   ```
+
+4. **Generate the Figures:**
+   Reads the `.npz` binary outputs from the emulation and plots the 4 thesis-grade PDF figures.
+   ```bash
+   python3 emulation/generate_figures.py
+   ```
+
+---
+
+## 📝 Citation
+
+If this stochastic emulation environment or mathematical scaling approach assists your research, please cite or attribute contextually to:
+
+> **AYRIBAŞ, Batuhan.** *NanoPhotonic GNSS Receiver: Stochastic Emulation Suite.* [GitHub Repository]. ORCID: [0009-0009-2807-3264](https://orcid.org/0009-0009-2807-3264).
