@@ -18,9 +18,12 @@
 
 ## 📖 Overview
 
+This repository provides the underlying **stochastic emulation framework** used to simulate introducing a **Chip-Scale Optical Clock (CSOC)** to the receiver architecture. The mathematical foundations, theoretical discussions, and real-world implications of this architecture are detailed in the accompanying manuscript:
+📄 **[Decoupling Time from Space: The Integration of Chip-Scale Optical Clocks into GNSS Architectures](Decoupling%20Time%20from%20Space.pdf)**.
+
 Traditional GNSS receivers rely on Temperature-Compensated Crystal Oscillators (TCXOs) to maintain the local timing replica. During periods of satellite signal degradation—such as in urban canyons, under heavy foliage, or during electronic spoofing—the receiver's Geometric Dilution of Precision (GDOP) spikes, forcing the Extended Kalman Filter (EKF) to rely on the local clock for "holdover". A drifting TCXO rapidly corrupts the geometric trilateration, causing the position estimate to diverge.
 
-This repository provides the underlying **stochastic emulation framework** used to simulate introducing a **Chip-Scale Optical Clock (CSOC)** to the receiver architecture. By analyzing Allan Variance parameters and injecting them into the $Q_{clock}$ process noise matrix of an 8-state EKF, this environment demonstrates that improving clock stability leads to a **super-linear ($>1:1$) enhancement** in positioning accuracy under challenged conditions.
+By analyzing Allan Variance parameters and injecting them into the $Q_{clock}$ process noise matrix of an 8-state EKF, this environment demonstrates that improving clock stability leads to a **super-linear ($>1:1$) enhancement** in positioning accuracy under challenged conditions.
 
 ---
 
